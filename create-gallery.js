@@ -6,9 +6,11 @@ const refs = {
   modal: document.querySelector('.js-lightbox'),
   lightboxImage: document.querySelector('.lightbox__image'),
   closeModal: document.querySelector('button[data-action="close-lightbox"]'),
+  closeModalToClickOutside: document.querySelector('.lightbox__overlay'),
 };
+let curentImgIndex;
 
-galleryItems.forEach(({ preview, original, description }) => {
+galleryItems.forEach(({ preview, original, description, dataIndex }, index) => {
   refs.gallery.insertAdjacentHTML(
     'beforeend',
     `<li class="lightbox__image">
@@ -16,7 +18,9 @@ galleryItems.forEach(({ preview, original, description }) => {
         <img class="gallery__image" 
         src=${preview} 
         data-source=${original} 
-        alt=${description}/> 
+        alt=${description};
+        dataindex= ${dataIndex}
+        />
       </a> 
     </li> `
   );
@@ -32,25 +36,56 @@ function onImgClick(event) {
   }
 
   refs.lightboxImage.src = `${event.target.dataset.source}`;
-  console.log(`event.target.dataset.source: ${event.target.dataset.source}`);
   refs.lightboxImage.alt = `${event.target.alt}`;
-  console.log(`event.target.alt: ${event.target.alt}`);
+  curentImgIndex = `${event.target.dataIndex}`;
+  console.log(curentImgIndex);
+  // console.log(`event.target.alt: ${event.target.alt}`);
+  // refs.lightboxImage.dataindex = `${event.target.dataIndex}`;
+  // console.dir(`event.target.alt: ${event.target.dataIndex}`);
 
   refs.modal.classList.add('is-open');
 }
 
-refs.closeModal.addEventListener('click', onClickCloseBtn);
+refs.closeModal.addEventListener('click', closeModal);
 
-function onClickCloseBtn() {
+function closeModal() {
   refs.modal.classList.remove('is-open');
   refs.lightboxImage.src = '';
   refs.lightboxImage.alt = '';
 }
 
+// Додатково.
+
+// Закривати вікно по escape
+
 window.addEventListener('keydown', escape);
 
 function escape(event) {
   if (event.key === 'Escape') {
-    onClickCloseBtn();
+    closeModal();
+  }
+}
+
+// Закривати вікно по кліку в "молоко"
+
+refs.closeModalToClickOutside.addEventListener('click', clickOutside);
+
+function clickOutside(event) {
+  console.log(`event.target:  `, event.target);
+  console.log(`event.currentTarget`, event.currentTarget);
+  if (event.target === event.currentTarget) {
+    closeModal();
+  }
+}
+
+// перелистування клавішами вліво/вправо
+
+window.addEventListener('keydown', sliderGallerys);
+
+function sliderGallerys(event) {
+  if (event.key === 'ArrowRight') {
+    console.log('ArrowRight');
+    console.log(event.target.dataindex);
+    closeModal();
   }
 }
