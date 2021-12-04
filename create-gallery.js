@@ -8,9 +8,8 @@ const refs = {
   closeModal: document.querySelector('button[data-action="close-lightbox"]'),
   closeModalToClickOutside: document.querySelector('.lightbox__overlay'),
 };
-let curentImgIndex;
 
-galleryItems.forEach(({ preview, original, description, dataIndex }, index) => {
+galleryItems.forEach(({ preview, original, description, defaultIndex }) => {
   refs.gallery.insertAdjacentHTML(
     'beforeend',
     `<li class="lightbox__image">
@@ -19,12 +18,14 @@ galleryItems.forEach(({ preview, original, description, dataIndex }, index) => {
         src=${preview} 
         data-source=${original} 
         alt=${description};
-        dataindex= ${dataIndex}
+        data-index= ${defaultIndex}
         />
       </a> 
     </li> `
   );
 });
+
+let curentImgIndex; // індекс відкритої катминки.
 
 refs.gallery.addEventListener('click', onImgClick);
 
@@ -37,11 +38,11 @@ function onImgClick(event) {
 
   refs.lightboxImage.src = `${event.target.dataset.source}`;
   refs.lightboxImage.alt = `${event.target.alt}`;
-  curentImgIndex = `${event.target.dataIndex}`;
-  console.log(curentImgIndex);
-  // console.log(`event.target.alt: ${event.target.alt}`);
-  // refs.lightboxImage.dataindex = `${event.target.dataIndex}`;
-  // console.dir(`event.target.alt: ${event.target.dataIndex}`);
+  refs.lightboxImage.index = `${event.target.dataset.index}`;
+
+  curentImgIndex = `${event.target.dataset.index}`;
+
+  console.log(refs.lightboxImage.index);
 
   refs.modal.classList.add('is-open');
 }
@@ -52,6 +53,7 @@ function closeModal() {
   refs.modal.classList.remove('is-open');
   refs.lightboxImage.src = '';
   refs.lightboxImage.alt = '';
+  refs.lightboxImage.index = '';
 }
 
 // Додатково.
@@ -68,24 +70,39 @@ function escape(event) {
 
 // Закривати вікно по кліку в "молоко"
 
-refs.closeModalToClickOutside.addEventListener('click', clickOutside);
+// refs.closeModalToClickOutside.addEventListener('click', clickOutside);
 
-function clickOutside(event) {
-  console.log(`event.target:  `, event.target);
-  console.log(`event.currentTarget`, event.currentTarget);
-  if (event.target === event.currentTarget) {
-    closeModal();
-  }
-}
+// function clickOutside(event) {
+//   console.log(`event.target:  `, event.target);
+//   console.log(`event.currentTarget`, event.currentTarget);
+//   if (event.target === event.currentTarget) {
+//     closeModal();
+//   }
+// }
 
 // перелистування клавішами вліво/вправо
+
+// let curentImgIndex = refs.lightboxImage.index;
 
 window.addEventListener('keydown', sliderGallerys);
 
 function sliderGallerys(event) {
   if (event.key === 'ArrowRight') {
     console.log('ArrowRight');
-    console.log(event.target.dataindex);
-    closeModal();
+    const curentImgIndexN = Number(curentImgIndex);
+    console.log((curentImgIndex = curentImgIndexN + 1));
+
+    refs.lightboxImage.src = `${galleryItems[curentImgIndex].original}`;
+    refs.lightboxImage.alt = `${event.target.alt}`;
+    refs.lightboxImage.index = `${event.target.dataset.index}`;
+
+    curentImgIndex = `${event.target.dataset.index}`;
+
+    console.log(refs.lightboxImage.index);
+    // closeModal();
+  }
+  if (event.key === 'ArrowLeft') {
+    console.log('ArrowLeft');
+    console.log((curentImgIndex -= 1));
   }
 }
