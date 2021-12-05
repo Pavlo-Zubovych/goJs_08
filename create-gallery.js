@@ -70,15 +70,15 @@ function escape(event) {
 
 // Закривати вікно по кліку в "молоко"
 
-// refs.closeModalToClickOutside.addEventListener('click', clickOutside);
+refs.closeModalToClickOutside.addEventListener('click', clickOutside);
 
-// function clickOutside(event) {
-//   console.log(`event.target:  `, event.target);
-//   console.log(`event.currentTarget`, event.currentTarget);
-//   if (event.target === event.currentTarget) {
-//     closeModal();
-//   }
-// }
+function clickOutside(event) {
+  console.log(`event.target:  `, event.target);
+  console.log(`event.currentTarget`, event.currentTarget);
+  if (event.target === event.currentTarget) {
+    closeModal();
+  }
+}
 
 // перелистування клавішами вліво/вправо
 
